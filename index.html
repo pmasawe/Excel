@@ -1,55 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spreadsheet - Excel Import/Export</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spreadsheet - Excel Import/Export</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-  <h1>Spreadsheet - Excel Import/Export</h1>
-  <div id="spreadsheet" style="width: 100%; height: 400px;"></div>
-  <div>
+<h1>Spreadsheet in the browser (DEMO)</h1>
+<ol>
+    <li><p>Work on the spreadsheet below</p></li>
+    <li><p>Export to Excel</p></li>
+    <li><p>Import from an Excel file by clicking on the "Choose file" button</p></li>
+</ol>
+<div id="spreadsheet" style="width: 100%; height: 400px;"></div>
+<div>
     <button id="export-excel">Export to Excel</button>
     <input type="file" id="import-excel" accept=".xlsx, .xls">
-  </div>
+</div>
 
-  <script>
+<script>
     const container = document.getElementById('spreadsheet');
     const hot = new Handsontable(container, {
-      //data: Handsontable.helper.createSpreadsheetData(10, 10),
-      colHeaders: true,
-      rowHeaders: true,
-      contextMenu: true,
-      licenseKey: 'non-commercial-and-evaluation' // Replace for commercial use
+        //data: Handsontable.helper.createSpreadsheetData(10, 10),
+        colHeaders: true,
+        rowHeaders: true,
+        contextMenu: true,
+        licenseKey: 'non-commercial-and-evaluation' // Replace for commercial use
     });
 
     // Export to Excel
     document.getElementById('export-excel').addEventListener('click', () => {
-      const data = hot.getData(); // Retrieve Handsontable data
-      const ws = XLSX.utils.aoa_to_sheet(data); // Convert array of arrays to Excel sheet
-      const wb = XLSX.utils.book_new(); // Create a new workbook
-      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1'); // Add the sheet to the workbook
-      XLSX.writeFile(wb, 'spreadsheet.xlsx'); // Save as .xlsx file
+        const data = hot.getData(); // Retrieve Handsontable data
+        const ws = XLSX.utils.aoa_to_sheet(data); // Convert array of arrays to Excel sheet
+        const wb = XLSX.utils.book_new(); // Create a new workbook
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1'); // Add the sheet to the workbook
+        XLSX.writeFile(wb, 'spreadsheet.xlsx'); // Save as .xlsx file
     });
 
     // Import from Excel
     document.getElementById('import-excel').addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
+        const file = event.target.files[0];
+        if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { header: 1 });
-        hot.loadData(sheetData); // Load the data into Handsontable
-      };
-      reader.readAsArrayBuffer(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], { header: 1 });
+            hot.loadData(sheetData); // Load the data into Handsontable
+        };
+        reader.readAsArrayBuffer(file);
     });
-  </script>
+</script>
 </body>
 </html>
